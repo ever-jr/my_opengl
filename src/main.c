@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #define WINDOW_WIDTH 640
@@ -14,6 +15,11 @@ int main(void) {
         return -1;
     }
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
     window = glfwCreateWindow(
         WINDOW_WIDTH, WINDOW_HEIGHT,
         WINDOW_TITLE,
@@ -26,6 +32,12 @@ int main(void) {
     }
 
     glfwMakeContextCurrent(window);
+
+    // init glad
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        fprintf(stderr, "failed to initialize GLAD\n");
+        return -1;
+    }
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
