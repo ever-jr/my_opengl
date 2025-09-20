@@ -6,6 +6,8 @@
 #define WINDOW_HEIGHT 480
 #define WINDOW_TITLE "Trying OpenGL"
 
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 int main(void) {
     printf("Hello OpenGL\n");
 
@@ -39,6 +41,8 @@ int main(void) {
         return -1;
     }
 
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -49,4 +53,9 @@ int main(void) {
 
     glfwTerminate();
     return 0;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    printf("window resized: %dx%d\n", width, height);
+    glViewport(0, 0, width, height);
 }
