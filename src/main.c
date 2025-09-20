@@ -6,12 +6,13 @@
 #define WINDOW_HEIGHT 480
 #define WINDOW_TITLE "Trying OpenGL"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void process_input(GLFWwindow *window);
 
 int main(void) {
     printf("Hello OpenGL\n");
 
-    GLFWwindow* window;
+    GLFWwindow *window;
 
     if (!glfwInit()) {
         return -1;
@@ -46,8 +47,9 @@ int main(void) {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glfwSwapBuffers(window);
+        process_input(window);
 
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
@@ -55,7 +57,13 @@ int main(void) {
     return 0;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     printf("window resized: %dx%d\n", width, height);
     glViewport(0, 0, width, height);
+}
+
+void process_input(GLFWwindow *window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
 }
