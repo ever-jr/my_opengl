@@ -15,6 +15,7 @@ int main(void) {
     GLFWwindow *window;
 
     if (!glfwInit()) {
+        fprintf(stderr, "failed to initialize GLFW!\n");
         return -1;
     }
 
@@ -45,9 +46,10 @@ int main(void) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT);
-
         process_input(window);
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
