@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
+#include <math.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -58,8 +59,9 @@ int main(void) {
     const char *fragment_shader_source =
         "#version 330 core\n"
         "out vec4 frag_color;\n"
+        "uniform vec4 our_color;\n"
         "void main() {\n"
-        "    frag_color = vec4(1.0f, 0.5f, 0.2f, 1.0);\n"
+        "    frag_color = our_color;\n"
         "}\n"
         ;
 
@@ -101,6 +103,8 @@ int main(void) {
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
+
+    int vertex_color_location = glGetUniformLocation(shader_program, "our_color");
     //~end SHADERS
     
     // elements
@@ -137,6 +141,7 @@ int main(void) {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    
 
     while (!glfwWindowShouldClose(window)) {
         process_input(window);
@@ -144,7 +149,11 @@ int main(void) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        float time_value = glfwGetTime();
+        float green_value = (sin(time_value) / 2.0f) + 0.5f;
+
         glUseProgram(shader_program);
+        glUniform4f(vertex_color_location, 0.0f, green_value, 0.0f, 1.0f);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glBindVertexArray(0); // no need to unbind everytime
