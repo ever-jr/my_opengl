@@ -51,15 +51,18 @@ int main(void) {
     const char *vertex_shader_source =
         "#version 330 core\n"
         "layout (location = 0) in vec3 a_pos;\n"
+        "layout (location = 1) in vec3 a_color;\n"
+        "out vec3 our_color;\n"
         "void main() {\n"
-        "    gl_Position = vec4(a_pos.x, a_pos.y, a_pos.z, 1.0);\n"
+        "    gl_Position = vec4(a_pos, 1.0);\n"
+        "   our_color = a_color;\n"
         "}\n"
         ;
 
     const char *fragment_shader_source =
         "#version 330 core\n"
-        "out vec4 frag_color;\n"
-        "uniform vec4 our_color;\n"
+        "out vec3 frag_color;\n"
+        "in vec3 our_color;\n"
         "void main() {\n"
         "    frag_color = our_color;\n"
         "}\n"
@@ -103,20 +106,17 @@ int main(void) {
 
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
-
-    int vertex_color_location = glGetUniformLocation(shader_program, "our_color");
     //~end SHADERS
     
     // elements
     float vertices[] = {
-         0.5f,  0.5f,  0.0f,
-         0.5f, -0.5f,  0.0f,
-        -0.5f, -0.5f,  0.0f,
-        -0.5f,  0.5f,  0.0f
+        // positions            // colors
+         0.0f,  0.5f,  0.0f,    1.0f, 0.0f, 0.0f,   // top
+         0.5f, -0.5f,  0.0f,    0.0f, 1.0f, 0.0f,   // bottom right
+        -0.5f, -0.5f,  0.0f,    0.0f, 0.0f, 1.0f,   // bottom left
     };
     unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 2
     };
 
     unsigned int vao; // vertex array object
@@ -136,8 +136,12 @@ int main(void) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -149,11 +153,8 @@ int main(void) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        float time_value = glfwGetTime();
-        float green_value = (sin(time_value) / 2.0f) + 0.5f;
-
         glUseProgram(shader_program);
-        glUniform4f(vertex_color_location, 0.0f, green_value, 0.0f, 1.0f);
+
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glBindVertexArray(0); // no need to unbind everytime
